@@ -36,3 +36,6 @@ print(confusionMatrix)
 
 # Importance of variables
 varImpPlot(rfModel)
+
+# Save the Random Forest model to a file
+saveRDS(rfModel, file="/opt/app-root/src/r-diabetes/models/diabetes_rf_model.rds")
