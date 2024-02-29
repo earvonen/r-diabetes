@@ -1,32 +1,36 @@
 # Load necessary libraries
 library(keras)
 library(readr) # For reading CSV files
-library(caret) # For data splitting
 
 # Set the path to the CSV file
-filePath <- "/mnt/data/diabetes.csv"
+filePath <- "/opt/app-root/src/r-diabetes/data/diabetes.csv"
 
 # Load the data
 data <- read_csv(filePath)
 
-# Split the data into features and target
-features <- data[, -ncol(data)] # Assuming the last column is the target
-target <- data[, ncol(data)]
+# Convert data to a matrix format for Keras
+data_matrix <- data.matrix(data)
+
+# Assuming the last column is the target variable and the rest are features
+features <- data_matrix[, -ncol(data_matrix)]
+target <- data_matrix[, ncol(data_matrix)]
 
 # Normalize the features
 features <- scale(features)
 
 # Split data into training and testing sets
 set.seed(123) # For reproducibility
-indexes <- createDataPartition(target, p = 0.8, list = FALSE)
-trainFeatures <- features[indexes, ]
-testFeatures <- features[-indexes, ]
-trainTarget <- target[indexes]
-testTarget <- target[-indexes]
+sample_size <- floor(0.8 * nrow(data_matrix))
+train_indices <- sample(seq_len(nrow(data_matrix)), size = sample_size)
+
+trainFeatures <- features[train_indices, ]
+testFeatures <- features[-train_indices, ]
+trainTarget <- target[train_indices]
+testTarget <- target[-train_indices]
 
 # Convert targets to categorical
-trainTarget <- to_categorical(trainTarget)
-testTarget <- to_categorical(testTarget)
+trainTarget <- to_categorical(trainTarget - 1) # Subtract 1 to make classes start at 0
+testTarget <- to_categorical(testTarget - 1)
 
 # Define the model
 model <- keras_model_sequential() %>%
