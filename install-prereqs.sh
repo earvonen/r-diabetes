@@ -5,3 +5,5 @@ source ~/.virtualenvs/r-reticulate/bin/activate
 pip install --upgrade pip
 pip install tensorflow keras
 pip install tf2onnx
+
+echo "Prereqs installed!"
