@@ -21,7 +21,7 @@ features <- data_matrix[, -ncol(data_matrix)]
 target <- data_matrix[, ncol(data_matrix)]
 
 # Normalize the features
-features <- scale(features)
+#features <- scale(features)
 
 # Split data into training and testing sets
 set.seed(123) # For reproducibility
@@ -33,8 +33,9 @@ testFeatures <- features[-train_indices, ]
 trainTarget <- target[train_indices]
 testTarget <- target[-train_indices]
 
-print(dim(trainTarget))
-print(dim(testTarget))
+print(length(trainTarget))
+print(length(testTarget))
+print(testFeatures[1, ])
 
 # Convert targets to categorical
 trainTarget <- to_categorical(trainTarget - 1) # Subtract 1 to make classes start at 0
@@ -49,7 +50,7 @@ testTarget <- to_categorical(testTarget - 1)
 #  layer_dense(units = 2, activation = 'softmax')
 
 model <- keras_model_sequential() %>%
-  layer_dense(units = 16 , activation = 'relu', input_shape = c(8)) %>%
+  layer_dense(units = 8 , activation = 'relu', input_shape = c(8)) %>%
   # Add other layers as necessary
   layer_dense(units = 1, activation = 'sigmoid')  # Output layer for binary classification
 
@@ -77,7 +78,8 @@ history <- model %>% fit(
 )
 
 # Evaluate the model
-model %>% evaluate(testFeatures, testTarget)
+evaluation <- model %>% evaluate(testFeatures, testTarget)
+print(evaluation)
 
 # Save your model
 save_model_hdf5(model, "./diabetes.h5")
