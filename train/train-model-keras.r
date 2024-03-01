@@ -1,6 +1,11 @@
 # Load necessary libraries
+library(reticulate)
+use_python("/usr/bin/python3.9", required=TRUE)
+use_virtualenv("~/.virtualenvs/r-reticulate", required = TRUE)
 library(keras)
 library(readr) # For reading CSV files
+
+
 
 # Set the path to the CSV file
 filePath <- "/opt/app-root/src/r-diabetes/data/diabetes.csv"
@@ -28,23 +33,38 @@ testFeatures <- features[-train_indices, ]
 trainTarget <- target[train_indices]
 testTarget <- target[-train_indices]
 
+print(dim(trainTarget))
+print(dim(testTarget))
+
 # Convert targets to categorical
 trainTarget <- to_categorical(trainTarget - 1) # Subtract 1 to make classes start at 0
 testTarget <- to_categorical(testTarget - 1)
 
 # Define the model
+#model <- keras_model_sequential() %>%
+#  layer_dense(units = 16, activation = 'relu', input_shape = dim(trainFeatures)[2]) %>%
+#  layer_dropout(rate = 0.5) %>%
+#  layer_dense(units = 8, activation = 'relu') %>%
+#  layer_dropout(rate = 0.5) %>%
+#  layer_dense(units = 2, activation = 'softmax')
+
 model <- keras_model_sequential() %>%
-  layer_dense(units = 16, activation = 'relu', input_shape = dim(trainFeatures)[2]) %>%
-  layer_dropout(rate = 0.5) %>%
-  layer_dense(units = 8, activation = 'relu') %>%
-  layer_dropout(rate = 0.5) %>%
-  layer_dense(units = 2, activation = 'softmax')
+  layer_dense(units = 16 , activation = 'relu', input_shape = c(8)) %>%
+  # Add other layers as necessary
+  layer_dense(units = 1, activation = 'sigmoid')  # Output layer for binary classification
+
 
 # Compile the model
+#model %>% compile(
+#  loss = 'categorical_crossentropy',
+#  optimizer = optimizer_rmsprop(),
+#  metrics = 'accuracy'
+#)
+
 model %>% compile(
-  loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
-  metrics = 'accuracy'
+  optimizer = 'adam',
+  loss = 'binary_crossentropy',
+  metrics = c('accuracy')
 )
 
 # Train the model
@@ -58,3 +78,6 @@ history <- model %>% fit(
 
 # Evaluate the model
 model %>% evaluate(testFeatures, testTarget)
+
+# Save your model
+save_model_hdf5(model, "./diabetes.h5")
