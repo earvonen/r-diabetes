@@ -1,8 +1,8 @@
 import os
 import boto3
 
-source_path = "model.onnx"
-s3_destination_path = "models/model.onnx"
+source_path = "diabetes.onnx"
+s3_destination_path = "models/diabetes.onnx"
 
 key_id = os.getenv("AWS_ACCESS_KEY_ID")
 secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
