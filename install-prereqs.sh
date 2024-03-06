@@ -4,7 +4,7 @@ pip install boto3
 
 r install-prereqs.r
 
-pip install tensorwflow
+pip install tensorflow
 pip install boto3
 
 /usr/bin/python3.9 -m venv ~/.virtualenvs/r-reticulate
